@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                             android:background="@color/colorPrimary"
+                                             android:layout_height="match_parent">
+
+    <Button
+            android:id="@+id/btnEnrollChange"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/activity_main_btn_enroll"
+            android:textColor="#ffffff"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="40dp" app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    <ImageView
+            android:id="@+id/btnSettings"
+            android:layout_width="50dp"
+            android:layout_height="50dp" app:srcCompat="@drawable/ico_settings"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/activity_main_btn_settings_desc"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/lNotice"
+            android:layout_marginEnd="12dp"/>
+
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/btnSettings"
+            app:layout_constraintBottom_toTopOf="@+id/btnEnrollChange"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                      android:orientation="vertical">
+
+            <TextView android:id="@+id/lblWatchingSubject"
+                      android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:layout_marginBottom="4dp"
+                      android:text="@string/activity_main_lbl_watching_subject"
+                      android:textSize="20sp"
+                      android:textColor="@color/colorDarkTextColor"/>
+
+
+            <android.support.v7.widget.RecyclerView
+                    android:id="@+id/watchingSubjectsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+
+        </LinearLayout>
+
+        <TextView android:id="@+id/lblNoWatchingSubject"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="12dp"
+                  android:background="#75A5DB"
+                  android:text="@string/activity_main_lbl_no_watching_subject"
+                  android:textSize="20sp"
+                  android:textAlignment="center"
+                  android:textColor="@color/colorDarkTextColor"
+                  android:padding="8dp"
+                  android:visibility="gone"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+    <TextView
+            android:id="@+id/lblUnauth"
+            android:text="@string/activity_main_lbl_unauth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:alpha="0.7"
+            android:padding="8dp"
+            android:background="#E05151"
+            android:textColor="#850000"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" android:visibility="gone"/>
+
+
+    <LinearLayout
+            android:id="@+id/lNotice"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toStartOf="@+id/btnSettings" android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent"   android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="12dp">
+
+        <ImageView android:layout_width="40dp" android:layout_height="40dp"
+                   android:contentDescription="@string/activity_main_img_notice_desc"
+                   android:layout_gravity="center_vertical"
+                   app:srcCompat="@drawable/ico_notice"
+        />
+
+        <LinearLayout android:layout_width="0dp" android:layout_height="45dp"
+                      android:layout_weight="1"
+                      android:layout_gravity="center_vertical"
+                      android:layout_marginStart="8dp"
+                      android:padding="4dp"
+                      android:background="#84A8D5"
+                      android:orientation="horizontal">
+
+            <TextView android:id="@+id/lblNotice"
+                      android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:layout_gravity="center_vertical"
+                      android:ellipsize="end"
+                      android:maxLines="1"
+                      android:textSize="21sp"
+                      android:textColor="@color/colorDarkTextColor"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <View android:id="@+id/touchInvalidator"
+          android:layout_width="match_parent" android:layout_height="match_parent"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent" android:visibility="gone"
+    />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "467219905221",
+    "firebase_url": "https://whenisvacant.firebaseio.com",
+    "project_id": "whenisvacant",
+    "storage_bucket": "whenisvacant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467219905221:android:2d9bf994259f422f",
+        "android_client_info": {
+          "package_name": "com.dongmin.www.wiv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467219905221-kst7djrn4aten7qc5i3l8thi96gvs9b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRkU54oWpLVlJ00Pu6LlcdC0rHC2MKxLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467219905221-kst7djrn4aten7qc5i3l8thi96gvs9b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:orientation="vertical"
+                                             android:background="@color/colorPrimary"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
+
+    <LinearLayout android:id="@+id/lTitle"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_gravity="center_vertical"
+                  android:layout_margin="12dp"
+                  android:padding="8dp"
+                  android:background="#84A8D5"
+                  android:orientation="horizontal">
+
+        <TextView android:id="@+id/lblTitle"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_gravity="center_vertical"
+                  android:maxLines="2"
+                  android:textSize="21sp"
+                  android:textColor="@color/colorDarkTextColor"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout android:id="@+id/lContent"
+                  android:layout_width="match_parent" android:layout_height="0dp"
+                  android:layout_weight="1"
+                  android:layout_gravity="center_vertical"
+                  android:layout_margin="12dp"
+                  android:background="#84A8D5"
+                  android:orientation="horizontal">
+
+        <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                          android:padding="8dp"
+                          android:orientation="vertical">
+                <TextView android:id="@+id/lblContent"
+                          android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:padding="8dp"
+                          android:textSize="20sp"
+                          android:textColor="@color/colorDarkTextColor"/>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <Button android:id="@+id/btnClose"
+            android:layout_width="match_parent" android:layout_height="60dp"
+            android:layout_margin="12dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/activity_notice_btn_close"
+            android:textSize="30sp"
+            android:textColor="#ffffff"
+    />
+
+</LinearLayout>

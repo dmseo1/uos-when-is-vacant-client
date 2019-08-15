@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="300dp"
+              android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/lblDesc"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:textColor="#000000"
+              android:textSize="20sp"
+              android:textAlignment="center"
+              android:layout_margin="8dp"
+              android:text="@string/popup_dup_email_auth_check_lbl_desc"
+    />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+
+        <Button android:id="@+id/btnCancel"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@color/colorLightTextColor"
+                android:layout_margin="8dp"
+                android:textColor="#ffffff"
+                android:textSize="25sp"
+                android:text="@string/popup_dup_email_auth_check_btn_cancel"/>
+
+
+
+        <Button android:id="@+id/btnContinue"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent" android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimaryDark"
+                android:layout_margin="8dp"
+                android:textColor="#ffffff"
+                android:textSize="25sp"
+                android:text="@string/popup_dup_email_auth_check_btn_continue"/>
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

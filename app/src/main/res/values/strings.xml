@@ -1,0 +1,87 @@
+<resources>
+
+    <string name="app_name">빈 자리 알림</string>
+    <string name="channel_name">wiv_channel</string>
+
+    <!-- activity_init.xml -->
+    <string name="activity_init_title_1">서울시립대학교</string>
+    <string name="activity_init_title_2">수강신청 빈자리 알림</string>
+
+    <!-- activity_login.xml -->
+    <string name="activity_login_lbl_desc_1">"안녕하세요"</string>
+    <string name="activity_login_lbl_desc_2">계속하기 위해 "<b>"서울시립대 웹메일 주소"</b>"를 입력해주세요.</string>
+    <string name="activity_login_btn_next">다 음</string>
+
+    <!-- activity_join.xml -->
+    <string name="activity_join_lbl_desc_1">로 전송된 "<b>"인증코드"</b>"를 입력해주세요.</string>
+    <string name="activity_join_lbl_no_auth_code">메일을 받지 못하셨나요?</string>
+    <string name="activity_join_btn_resend">인증코드 재발송</string>
+    <string name="activity_join_btn_cancel">취소</string>
+    <string name="activity_join_btn_confirm">완료</string>
+
+    <!-- activity_main.xml -->
+    <string name="activity_main_lbl_unauth">인증이 만료되었습니다. 이 상태에서는 알림을 받을 수 없으며, 계속 이용하기 위해서는 앱을 종료 후 재인증하여야합니다.</string>
+    <string name="activity_main_lbl_watching_subject"> </string>
+    <string name="activity_main_lbl_no_watching_subject">알림을 받고 있는 과목이 없습니다. 아래 \"과목 조회\"를 눌러 빈자리 알림을 설정하세요!</string>
+    <string name="activity_main_btn_enroll">과목 조회</string>
+    <string name="activity_main_btn_change">과목 조회</string>
+    <string name="activity_main_btn_settings_desc">설정 버튼</string>
+    <string name="activity_main_img_notice_desc">공지 이미지</string>
+
+    <!-- activity_notice.xml -->
+    <string name="activity_notice_btn_close">닫기</string>
+
+    <!-- activity_enroll.xml -->
+    <string name="activity_enroll_rd_gyoyang">교양</string>
+    <string name="activity_enroll_rd_jeongong">전공</string>
+
+    <string name="activity_enroll_chk_only_vacant_subject">공석이 있는 과목만 조회</string>
+
+    <string name="activity_enroll_chk_include_gs">교선</string>
+    <string name="activity_enroll_chk_include_gp">교필</string>
+    <string name="activity_enroll_chk_include_ro">ROTC</string>
+    <string name="activity_enroll_chk_include_gz">교직</string>
+
+
+    <string name="activity_enroll_chk_exclude_experiment_subject">실험과목 제외</string>
+    <string name="activity_enroll_chk_exclude_engineering_subject">공학소양 제외</string>
+
+    <string name="activity_enroll_btn_filter_hide">▲ 필터 숨기기</string>
+    <string name="activity_enroll_btn_filter_show">▼ 필터 보이기</string>
+
+    <string name="activity_enroll_dept">대학</string>
+    <string name="activity_enroll_sub_dept">학부/과</string>
+    <string name="activity_enroll_subject_name">교과목명</string>
+
+    <string name="activity_enroll_btn_search">조회</string>
+    <string name="activity_enroll_lbl_description">조회 버튼을 누르면 \n 여기에 결과가 표시됩니다.</string>
+    <string name="activity_enroll_lbl_description_2">조회 결과가 없습니다.</string>
+
+    <!-- popup_join_auth_error.xml -->
+    <string name="popup_join_auth_error_lbl_desc">인증코드를 잘못 입력하였습니다."<br> </br>"인증코드를 여러 번 요청한 경우 가장 마지막에 도착한 인증코드를 입력해주세요.</string>
+    <string name="popup_join_auth_error_btn_ok">확인</string>
+
+    <!-- popup_dup_email_auth_check.xml -->
+    <string name="popup_dup_email_auth_check_lbl_desc"><font color="red">타 기기 또는 이전 어플리케이션에서 이 이메일로 인증한 기록이 있습니다.</font> 이전의 인증을 모두 해제하고 본 기기의 본 어플리케이션을 사용하시려면 "계속"을 눌러주세요.<br/>(취소를 누를 경우 어플리케이션이 종료됩니다)</string>
+    <string name="popup_dup_email_auth_check_btn_cancel">취소</string>
+    <string name="popup_dup_email_auth_check_btn_continue">계속</string>
+
+
+    <!-- element_subject.xml -->
+    <string name="element_subject_first_row">%1$s(%2$s-%3$s분반)</string>
+    <string name="element_subject_second_row_g">%1$s학년·%2$s(%3$s)·%4$s학점</string>
+    <string name="element_subject_second_row_j">%1$s학년·%2$s·%3$s학점</string>
+    <string name="element_subject_third_row">%1$s 교수님·%2$s</string>
+    <string name="element_subject_fourth_row">현재/정원: %1$s/%2$s</string>
+    <string name="element_subject_btn_enroll">등록</string>
+
+    <!-- element_watching_subject.xml -->
+    <string name="element_watching_subject_lbl_subject_name">%1$s</string>
+    <string name="element_watching_subject_lbl_subject_no_div">과목번호-분반: %1$s</string>
+    <string name="element_watching_subject_btn_delete">해제</string>
+
+    <!-- firebase -->
+
+    <string name="default_notification_channel_id">빈 자리 알림</string>
+    <string name="msg_token_fmt">토큰 가져오기</string>
+</resources>

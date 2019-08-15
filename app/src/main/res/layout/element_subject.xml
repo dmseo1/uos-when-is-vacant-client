@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                             android:layout_height="wrap_content">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:padding="8dp"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  android:id="@+id/linearLayout">
+
+        <TextView android:id="@+id/subjectName"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_marginBottom="8dp"
+                  android:text="@string/element_subject_first_row"
+                  android:textSize="20sp"
+                  android:textColor="#000000"
+                  android:textStyle="bold"/>
+
+        <TextView android:id="@+id/subjectInfo1"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_marginBottom="4dp"
+                  android:text="@string/element_subject_second_row_g"
+                  android:textSize="18sp"
+                  android:textColor="#000000"/>
+        <TextView android:id="@+id/subjectInfo2"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:layout_marginBottom="4dp"
+                  android:text="@string/element_subject_third_row"
+                  android:textSize="18sp"
+                  android:textColor="#000000"/>
+        <TextView android:id="@+id/subjectInfo3"
+                  android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:text="@string/element_subject_fourth_row"
+                  android:textSize="18sp"
+                  android:textColor="#000000"/>
+
+    </LinearLayout>
+    <Button
+            android:id="@+id/btnEnroll"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:alpha="0.8"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/element_subject_btn_enroll"
+            android:textSize="22sp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"/>
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp" android:id="@+id/view"
+            android:background="@color/colorPrimaryDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
