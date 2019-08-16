@@ -178,22 +178,48 @@
         <LinearLayout
                 android:id="@+id/lGsPartition"
                 android:layout_marginStart="8dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <CheckBox
-                    android:text="@string/activity_enroll_chk_exclude_experiment_subject"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/chkExcludeExperimentSubject"
-                    android:padding="6dp"
-                    android:layout_marginStart="8dp"/>
 
-            <CheckBox
-                    android:text="@string/activity_enroll_chk_exclude_engineering_subject"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/chkExcludeEngineeringSubject"
-                    android:padding="6dp"
-                    android:layout_marginStart="8dp"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="horizontal">
+
+                <CheckBox
+                        android:text="@string/activity_enroll_chk_exclude_experiment_subject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/chkExcludeExperimentSubject"
+                        android:padding="6dp"
+                        android:layout_marginStart="8dp"/>
+
+                <CheckBox
+                        android:text="@string/activity_enroll_chk_exclude_engineering_subject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/chkExcludeEngineeringSubject"
+                        android:padding="6dp"
+                        android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="horizontal">
+
+                <CheckBox
+                        android:text="@string/activity_enroll_chk_exclude_volunteer_subject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/chkExcludeVolunteerSubject"
+                        android:padding="6dp"
+                        android:layout_marginStart="8dp"/>
+
+                <CheckBox
+                        android:text="@string/activity_enroll_chk_exclude_f_language_subject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/chkExcludeFLanguageSubject"
+                        android:padding="6dp"
+                        android:layout_marginStart="8dp"/>
+
+
+            </LinearLayout>
+
         </LinearLayout>
 
 

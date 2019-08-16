@@ -39,6 +39,8 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
 
     private var chkExcludeExperimentSubjectState = false
     private var chkExcludeEngineeringSubjectState = false
+    private var chkExcludeVolunteerSubjectState = false
+    private var chkExcludeFLanguageSubjectState = false
 
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,6 +116,14 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
 
         if(sf.getBoolean("chk_exclude_engineering_subject", false)) {
             chkExcludeEngineeringSubject.isChecked = true
+        }
+
+        if(sf.getBoolean("chk_exclude_volunteer_subject", false)) {
+            chkExcludeVolunteerSubject.isChecked = true
+        }
+
+        if(sf.getBoolean("chk_exclude_f_language_subject", false)) {
+            chkExcludeFLanguageSubject.isChecked = true
         }
 
 
@@ -240,6 +250,28 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
             sfEditor.apply()
         }
 
+        //사회봉사 조회 제외 체크박스 리스너 설정
+        chkExcludeVolunteerSubject.setOnCheckedChangeListener { _, isChecked ->
+            val sfEditor = sf.edit()
+            if(isChecked) {
+                sfEditor.putBoolean("chk_exclude_volunteer_subject", true)
+            } else {
+                sfEditor.putBoolean("chk_exclude_volunteer_subject", false)
+            }
+            sfEditor.apply()
+        }
+
+        //제2외국어 조회 제외 체크박스 리스너 설정
+        chkExcludeFLanguageSubject.setOnCheckedChangeListener { _, isChecked ->
+            val sfEditor = sf.edit()
+            if(isChecked) {
+                sfEditor.putBoolean("chk_exclude_f_language_subject", true)
+            } else {
+                sfEditor.putBoolean("chk_exclude_f_language_subject", false)
+            }
+            sfEditor.apply()
+        }
+
         //결과 조회 어댑터 생성 및 연결
         subjectListAdapter = SubjectListAdapter(this)
         subjectListLayoutManager = LinearLayoutManager(this)
@@ -339,6 +371,25 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                         true -> false
                         false -> chkExcludeEngineeringSubject.isChecked
                     }
+
+                    chkExcludeVolunteerSubjectState = when(rdJeongong.isChecked) {
+                        true -> false
+                        false -> chkExcludeVolunteerSubject.isChecked
+                    }
+
+                    chkExcludeFLanguageSubjectState = when(rdJeongong.isChecked) {
+                        true -> false
+                        false -> chkExcludeFLanguageSubject.isChecked
+                    }
+                } else {
+                    chkIncludeGsState = "o"
+                    chkIncludeGpState = "o"
+                    chkIncludeRoState = "o"
+                    chkIncludeGzState = "o"
+                    chkExcludeExperimentSubjectState = false
+                    chkExcludeEngineeringSubjectState = false
+                    chkExcludeVolunteerSubjectState = false
+                    chkExcludeFLanguageSubjectState = false
                 }
 
                 //교과목명을 한 글자 이상 입력 후 조회(트래픽 과다 방지)
@@ -383,8 +434,6 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                             return
                         }
 
-                        Log.d("여기를", "통과하는고니고니")
-
                         //교양, 전공에 따라 다르게 처리
                         if(targetSubjectType == "jeongong") {
                             //타겟 학부, 학과 코드가 담긴 element 를 선택
@@ -404,7 +453,6 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                                     }
                                     searchResultRepresentation(result!!)
                                     btnSearch.setOnClickListener(this@Enroll)
-
                                 }
                             }).execute()
                         } else {
@@ -462,8 +510,14 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
             val subject = SubjectElement().fillFromJSON(data.get(i).toString())
             if(subject.dayNightNm == "계약" || subject.subjectNm == "") continue
             if(chkOnlyVacantSubjectState && (subject.tlsnCount.toInt() >= subject.tlsnLimitCount.toInt())) continue
-            if(chkExcludeExperimentSubjectState && (subject.subjectNm.contains("및실험") || subject.subjectNm.contains("학및실습"))) continue
+            if(chkExcludeExperimentSubjectState && subject.subjectDiv2 == "학문기초" &&
+                (subject.subjectNm.contains("및실험") || subject.subjectNm.contains("학및실습") || subject.subjectNm.contains("창의주제탐구세미나"))) continue
             if(chkExcludeEngineeringSubjectState && subject.subjectDiv2 == "공학소양") continue
+            if(chkExcludeVolunteerSubjectState && subject.subjectDiv2 == "사회봉사") continue
+            if(chkExcludeFLanguageSubjectState && subject.subjectDiv2 == "외국어" &&
+                (subject.subjectNm.contains("중국어") || subject.subjectNm.contains("일본어") || subject.subjectNm.contains("스페인어") ||
+                 subject.subjectNm.contains("베트남어") || subject.subjectNm.contains("러시아어") || subject.subjectNm.contains("독일어") ||
+                 subject.subjectNm.contains("불어") || subject.subjectNm.contains("라틴어"))) continue
 
             (subjectListAdapter as SubjectListAdapter).subjectList.add(subject)
             realCnt++

@@ -18,6 +18,7 @@ import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONException
 import org.json.JSONObject
 
 class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapter.Callback {
@@ -46,20 +47,21 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         watchingSubjectsList.adapter = watchingSubjectsListAdapter
         watchingSubjectsList.layoutManager = watchingSubjectsListLayoutManager
 
+        //어댑터 콜백 설정
+        (watchingSubjectsListAdapter as WatchingSubjectListAdapter).setCallbackToMain(this)
+
         //알림받는 과목이 있는지 확인한 후 표시
         if(sf.getString("watching_subject", "00000-00") == "00000-00") {
-            //TODO(왓칭과목 UI 변경)
             lblNoWatchingSubject.visibility = View.VISIBLE
             btnEnrollChange.text = resources.getString(R.string.activity_main_btn_enroll)
         } else {
-            //TODO(왓칭과목 UI 변경)
             lblNoWatchingSubject.visibility = View.GONE
             updateWatchingSubjectsList()
             btnEnrollChange.text = resources.getString(R.string.activity_main_btn_change)
         }
 
-        //어댑터 콜백 설정
-        (watchingSubjectsListAdapter as WatchingSubjectListAdapter).setCallbackToMain(this)
+        //설정 버튼 동작
+        btnSettings.setOnClickListener(this)
 
         //터치 무효화창 초기 설정
         touchInvalidator.visibility = View.GONE
@@ -72,21 +74,32 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         super.onResume()
         //Log.d("onResumeCalled-Main", "onResumeCalled")
 
+        //공지에 대한 인텐트 인스턴스를 생성한다
         noticeIntent = Intent(this@Main, Notice::class.java)
 
+        //최근 공지 하나를 서버에서 받아온다
         HttpConnector("fetch_notice.php",
             "secCode=onlythiswivappcancallthisfetchnoticephpfile!", object : UIModifyAvailableListener(applicationContext) {
                 override fun taskCompleted(result: String?) {
                     super.taskCompleted(result)
                     if(result == "NETWORK_CONNECTION_FAILED") return
-                    val jsonObject = JSONObject(result).getJSONObject("notice_info")
-                    lblNotice.text = jsonObject.getString("title")
-                    noticeIntent.putExtra("notice_title", jsonObject.getString("title"))
-                    noticeIntent.putExtra("notice_content", jsonObject.getString("content"))
-                    lNotice.setOnClickListener(this@Main)
+                    try {
+                        val jsonObject = JSONObject(result).getJSONObject("notice_info")
+                        lblNotice.text = jsonObject.getString("title")
+
+                        //공지 제목, 내용을 인텐트에 저장
+                        noticeIntent.putExtra("notice_title", jsonObject.getString("title"))
+                        noticeIntent.putExtra("notice_content", jsonObject.getString("content"))
+
+                        //공지 내용이 있고 나서야 공지가 클릭이 된다
+                        lNotice.setOnClickListener(this@Main)
+                    } catch(e : JSONException) {
+                        Log.e("WIV", "공지사항 불러오기 실패")
+                    }
                 }
         }).execute()
 
+        //메인 화면에 나올 때마다 인증 체크를 한다
         HttpConnector("user_auth_check.php",
             "secCode=onlythiswivappcancallthisuserauthcheckphpfile!&email=${sf.getString("email", "")}&token=${sf.getString("token", "")}",
             object : UIModifyAvailableListener(applicationContext) {
@@ -94,23 +107,24 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                     super.taskCompleted(result)
                     if(result == "NETWORK_CONNECTION_FAILED") return
                     when(result!!) {
+
+                        //인증시 통과
                         "AUTHORIZED" -> {
                             //버튼 활성화
-                            //TODO(왓칭과목 UI 변경)
                             btnEnrollChange.setOnClickListener(this@Main)
                             lblUnauth.visibility = View.GONE
                             touchInvalidator.visibility = View.GONE
                         }
 
+                        //인증받지 못할 경우
                         "UNAUTHORIZED" -> {
-                            //메시지 표시
+                            //인증 만료 메시지 표시
                             lblUnauth.visibility = View.VISIBLE
 
                             //터치 무효화 가동
                             touchInvalidator.visibility = View.VISIBLE
 
                             //버튼 비활성화
-                            //TODO(왓칭과목 UI 변경)
                             btnEnrollChange.setOnClickListener(null)
 
                             //자동 접속 해제
@@ -125,12 +139,15 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             }).execute()
     }
 
+    //왓칭과목의 리스트를 업데이트하는 메서드. 초기접속 또는 Enroll 에서 과목을 등록할 때 호출.
     private fun updateWatchingSubjectsList() {
         (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.clear()
 
+        //sharedPreferences 에서 불러온다
         val watchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
         val watchingSubjectsName = sf.getString("watching_subject_name", "")!!.split(";")
 
+        //TODO(출시시 해당 로그 제거)
         Log.d("watchingSubjects", sf.getString("watching_subject", "00000-00"))
         Log.d("watchingSubjectsName", sf.getString("watching_subject_name", ""))
 
@@ -146,7 +163,6 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
     override fun onNoWatchingSubject() {
         lblNoWatchingSubject.visibility = View.VISIBLE
     }
-
 
 
     override fun onClick(v: View?) {

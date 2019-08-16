@@ -31,20 +31,21 @@
     <!-- activity_notice.xml -->
     <string name="activity_notice_btn_close">닫기</string>
 
+    <!-- activity_settings.xml -->
+    <string name="activity_settings_lbl_title">환경설정</string>
+
     <!-- activity_enroll.xml -->
     <string name="activity_enroll_rd_gyoyang">교양</string>
     <string name="activity_enroll_rd_jeongong">전공</string>
-
     <string name="activity_enroll_chk_only_vacant_subject">공석이 있는 과목만 조회</string>
-
     <string name="activity_enroll_chk_include_gs">교선</string>
     <string name="activity_enroll_chk_include_gp">교필</string>
     <string name="activity_enroll_chk_include_ro">ROTC</string>
     <string name="activity_enroll_chk_include_gz">교직</string>
-
-
     <string name="activity_enroll_chk_exclude_experiment_subject">실험과목 제외</string>
     <string name="activity_enroll_chk_exclude_engineering_subject">공학소양 제외</string>
+    <string name="activity_enroll_chk_exclude_volunteer_subject">사회봉사 제외</string>
+    <string name="activity_enroll_chk_exclude_f_language_subject">제2외국어 제외</string>
 
     <string name="activity_enroll_btn_filter_hide">▲ 필터 숨기기</string>
     <string name="activity_enroll_btn_filter_show">▼ 필터 보이기</string>

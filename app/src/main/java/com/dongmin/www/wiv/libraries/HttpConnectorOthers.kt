@@ -10,10 +10,23 @@ import java.io.InputStreamReader
 import java.net.*
 
 
+//분산서버용 커넥터
 class HttpConnectorOthers constructor(private val path : String, private val param : String, private val listener : UIModifyAvailableListener?) : AsyncTask<Void, Int, String>() {
 
+    private var timeOutThread = Thread() //타임아웃 스레드
+    private var result = ""
+
+    override fun onPreExecute() {
+        //타임아웃 스레드 설정
+        timeOutThread = Thread {
+            Thread.sleep(10000)
+            onPostExecute("NETWORK_CONNECTION_UNSTABLE")
+            this.cancel(true)
+        }
+    }
+
     override fun doInBackground(vararg params: Void?): String {
-        var result = ""
+
 
         //TODO: 호출 파일명과 파라미터 확인(출시 시 제거)
         //Log.d(path, param)
@@ -89,6 +102,9 @@ class HttpConnectorOthers constructor(private val path : String, private val par
 
     override fun onPostExecute(result: String) {
         super.onPostExecute(result)
+        if(timeOutThread.isAlive) {
+            timeOutThread.interrupt()
+        }
         this.listener!!.taskCompleted(result)
     }
 }

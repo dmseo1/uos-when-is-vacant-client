@@ -12,11 +12,23 @@ import java.net.*
 
 class HttpConnector constructor(private val path : String, private val param : String, private val listener : UIModifyAvailableListener?) : AsyncTask<Void, Int, String>() {
 
+    private var timeOutThread = Thread() //타임아웃 스레드
+
+    override fun onPreExecute() {
+        //타임아웃 스레드 설정
+        timeOutThread = Thread {
+            Thread.sleep(10000)
+            onPostExecute("NETWORK_CONNECTION_UNSTABLE")
+            this.cancel(true)
+        }
+    }
+
+
     override fun doInBackground(vararg params: Void?): String {
         var result = ""
 
         //TODO: 호출 파일명과 파라미터 확인(출시 시 제거)
-        //Log.d(path, param)
+        Log.d(path, param)
 
         try {
             val url = URL(basicURL + this.path)
@@ -67,9 +79,12 @@ class HttpConnector constructor(private val path : String, private val param : S
             }
 
             data = buff.toString().trim { it <= ' ' }
-            Log.e("RECV DATA", data)
-            result = data
 
+            //TODO(출시시 해당 로그 제거)
+            //받은 데이터 출력
+            Log.e("RECV DATA", data)
+
+            result = data
         } catch (e: MalformedURLException) {
             //Log.e("여기", "군")
             result = "NETWORK_CONNECTION_FAILED"
@@ -84,6 +99,9 @@ class HttpConnector constructor(private val path : String, private val param : S
 
     override fun onPostExecute(result: String) {
         super.onPostExecute(result)
+        if(timeOutThread.isAlive) {
+            timeOutThread.interrupt()
+        }
         this.listener!!.taskCompleted(result)
     }
 }

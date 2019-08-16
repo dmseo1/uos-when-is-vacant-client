@@ -24,7 +24,7 @@ import java.util.*;
  * Modified by seodongmin on 2019-07-24 12:29.
  */
 
-public class WivServerTest {
+public class WivServer {
 
     private final String basicURL = "http://dak2183242.cafe24.com/wiv/";
     private HashMap<String, HashMap<String, Subject>> watchingSubjects; //교양 4개의 분류, 40여개의 학과가 키가 된다
@@ -32,7 +32,7 @@ public class WivServerTest {
     private String result = "";
 
     //생성자
-    private WivServerTest() {
+    private WivServer() {
         watchingSubjects = new HashMap<String, HashMap<String, Subject>>();
     }
 
@@ -102,7 +102,7 @@ public class WivServerTest {
 
     //메인함수
     public static void main(String[] args) {
-        new WivServerTest().start();
+        new WivServer().start();
     }
 
 
