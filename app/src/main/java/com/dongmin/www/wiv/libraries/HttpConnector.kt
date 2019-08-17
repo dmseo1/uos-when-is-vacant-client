@@ -2,6 +2,7 @@ package com.dongmin.www.wiv.libraries
 
 import com.dongmin.www.wiv.activities.Init.StaticData.basicURL
 import android.os.AsyncTask
+import android.os.Handler
 import android.util.Log
 import java.io.BufferedReader
 import java.io.IOException
@@ -13,14 +14,29 @@ import java.net.*
 class HttpConnector constructor(private val path : String, private val param : String, private val listener : UIModifyAvailableListener?) : AsyncTask<Void, Int, String>() {
 
     private var timeOutThread = Thread() //타임아웃 스레드
+    private var handler : Handler? = null
 
     override fun onPreExecute() {
-        //타임아웃 스레드 설정
-        timeOutThread = Thread {
-            Thread.sleep(10000)
-            onPostExecute("NETWORK_CONNECTION_UNSTABLE")
-            this.cancel(true)
+
+        try {
+            handler = Handler()
+            //타임아웃 스레드 설정
+            timeOutThread = Thread {
+                try {
+                    Thread.sleep(10000)
+                    handler!!.post {
+                        onPostExecute("NETWORK_CONNECTION_UNSTABLE")
+                    }
+                    this.cancel(true)
+                } catch(e : InterruptedException) {
+
+                }
+            }
+            timeOutThread.start()
+        } catch(e : Exception) {
+            return
         }
+
     }
 
 
@@ -34,6 +50,7 @@ class HttpConnector constructor(private val path : String, private val param : S
             val url = URL(basicURL + this.path)
             val conn = url.openConnection() as HttpURLConnection
 
+            Log.d("URL: ", url.toString())
 
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
             conn.requestMethod = "POST"

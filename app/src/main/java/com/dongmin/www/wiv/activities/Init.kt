@@ -14,16 +14,17 @@ import com.dongmin.www.wiv.R
 import com.dongmin.www.wiv.elements.SubDepartment
 import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
+import com.google.android.gms.ads.MobileAds
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 
 
 class Init : AppCompatActivity() {
 
-
     //전역 변수 선언
     companion object StaticData {
         var NUM_MAX_WATCHING_SUBJECTS = 2
-        const val basicURL = "http://dak2183242.cafe24.com/wiv/"
+        const val basicURL = "http://52.78.173.4/wiv/"
         var subDepartments = ArrayList<SubDepartment>()
         var departments = ArrayList<String>()
         lateinit var sf : SharedPreferences
@@ -52,11 +53,21 @@ class Init : AppCompatActivity() {
         //채널 등록(알림을 받기 위한 채널)
         createNotificationChannel()
 
+
         //버전 체크
         HttpConnector("fetch_app_variables.php", "secCode=onlythiswivappcancallthisfetchappvariablesphpfile!", object : UIModifyAvailableListener(applicationContext) {
             override fun taskCompleted(result: String?) {
                 super.taskCompleted(result)
-                if(result == "NETWORK_CONNECTION_FAILED") return
+                if(result!!.contains("NETWORK_CONNECTION")) {
+                    finish()
+                    return
+                }
+
+
+
+                //광고 초기화
+                MobileAds.initialize(this@Init, "ca-app-pub-1929576815920713~4583913588")
+
                 try {
                     val jsonObject = JSONObject(result).getJSONObject("app_variables")
                     val minVersionCode = jsonObject.getString("min_version_code").toLong()
@@ -67,15 +78,45 @@ class Init : AppCompatActivity() {
                             if(minVersionCode > packageManager.getPackageInfo(packageName, 0).longVersionCode) {
                                 Toast.makeText(applicationContext, "어플리케이션을 업데이트해주세요.", Toast.LENGTH_SHORT).show()
                                 finish()
-                            return
+                                return
+                             }
+                        }
+                        false -> {
+                            if(minVersionCode > packageManager.getPackageInfo(packageName, 0).versionCode) {
+                                Toast.makeText(applicationContext, "어플리케이션을 업데이트해주세요.", Toast.LENGTH_SHORT).show()
+                                finish()
+                                return
+                            }
                         }
                     }
-                    false -> {
-                        if(minVersionCode > packageManager.getPackageInfo(packageName, 0).versionCode) {
-                            Toast.makeText(applicationContext, "어플리케이션을 업데이트해주세요.", Toast.LENGTH_SHORT).show()
-                            finish()
-                            return
+
+                    //알림 과목을 서버 사이드에서 초기화 가능하도록 함
+                    if(sf.getBoolean("is_login", false)) {
+
+                        //트리거값이 0이 되는 경우에만 0으로 초기화한다
+                        if(jsonObject.getString("watching_subject_delete_triggered") == "0") {
+                            val sfEditor = sf.edit()
+                            sfEditor.putString("watching_subject_delete_triggered", "0")
+                            sfEditor.apply()
                         }
+
+                        //수강정정기간 이후 모든 왓칭 과목을 제거하는 트리거가 활성화되었는지 확인
+                        if(jsonObject.getString("watching_subject_delete_triggered") == "1" &&
+                            sf.getString("watching_subject_delete_triggered", "0") == "0") {
+
+                            //알림 구독 해제
+                            val ws = sf.getString("watching_subject", "00000-00")!!.split(";")
+                            for(i : Int in 0..(ws.size)) {
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic(ws[i])
+                            }
+
+                            val sfEditor = sf.edit()
+                            //sf 에서 삭제
+                            sfEditor.putString("watching_subject", "00000-00")
+                            sfEditor.putString("watching_subject_name", "")
+                            //해당 트리거는 1회용으로, 이후 다시 트리거되지 않도록 한다
+                            sfEditor.putString("watching_subject_delete_triggered", "1")
+                            sfEditor.apply()
                         }
                     }
                 } catch(e : Exception) {
@@ -90,7 +131,10 @@ class Init : AppCompatActivity() {
                 HttpConnector("fetch_dept_info.php", "secCode=onlythiswivappcancallthisfetchdeptinfophpfile!", object : UIModifyAvailableListener(applicationContext) {
                     override fun taskCompleted(result: String?) {
                         super.taskCompleted(result)
-                        if(result == "NETWORK_CONNECTION_FAILED") return
+                        if(result!!.contains("NETWORK_CONNECTION")) {
+                            finish()
+                            return
+                        }
                         subDepartments.clear()
                         departments.clear()
                         for(i : Int in 0..100) {

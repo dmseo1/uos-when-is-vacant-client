@@ -69,7 +69,7 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
                     object : UIModifyAvailableListener(context!!) {
                         override fun taskCompleted(result: String?) {
                             super.taskCompleted(result)
-                            if(result == "NETWORK_CONNECTION_FAILED") return
+                            if(result!!.contains("NETWORK_CONNECTION")) return
 
                             //알림 구독 삭제
                             FirebaseMessaging.getInstance().unsubscribeFromTopic(watchingSubjectsList[pos].subjectNoDiv)

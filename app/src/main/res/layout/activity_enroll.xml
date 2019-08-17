@@ -225,7 +225,7 @@
 
         <Button android:id="@+id/btnFilterHideShow"
                 android:layout_width="match_parent" android:layout_height="35dp"
-                android:background="#1e90ff"
+                android:background="@color/colorPrimaryMiddle"
                 android:textSize="20sp"
                 android:text="@string/activity_enroll_btn_filter_hide"/>
         <Button android:layout_width="match_parent" android:layout_height="55dp"

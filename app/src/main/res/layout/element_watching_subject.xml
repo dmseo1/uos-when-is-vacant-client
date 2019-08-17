@@ -34,7 +34,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:alpha="0.8"
-            android:background="@color/colorLightTextColor"
+            android:background="@drawable/btn_round_solid_style_light_text"
             android:text="@string/element_watching_subject_btn_delete"
             android:textSize="22sp"
             android:textColor="#ffffff"

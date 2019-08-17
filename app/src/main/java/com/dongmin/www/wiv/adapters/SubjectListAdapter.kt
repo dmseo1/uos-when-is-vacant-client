@@ -105,11 +105,11 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                     object: UIModifyAvailableListener(context!!) {
                         override fun taskCompleted(result: String?) {
                             super.taskCompleted(result)
-                            if(result == "NETWORK_CONNECTION_FAILED") {
+                            if(result!!.contains("NETWORK_CONNECTION")) {
                                 callbackToEnroll!!.onLoadingState(View.GONE)
                                 return
                             }
-                            when(result!!) {
+                            when(result) {
                                 "AUTHORIZED" -> {
                                     //이미 해당 유저가 알림을 받고 있는 과목인지 체크
                                     //if(sf.getString("watching_subject", "00000-00") == "${subjectList[pos].subjectNo}-${subjectList[pos].classDiv}") {
@@ -140,7 +140,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                                     object : UIModifyAvailableListener(context!!) {
                                                         override fun taskCompleted(result: String?) {
                                                             super.taskCompleted(result)
-                                                            if(result == "NETWORK_CONNECTION_FAILED") return
+                                                            if(result!!.contains("NETWORK_CONNECTION")) return
 
                                                             //sf 에 저장
                                                             val sfEditor = sf.edit()

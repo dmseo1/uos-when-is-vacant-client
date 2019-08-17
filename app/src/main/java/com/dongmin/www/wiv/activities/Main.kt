@@ -16,6 +16,8 @@ import com.dongmin.www.wiv.elements.SubjectElement
 import com.dongmin.www.wiv.elements.WatchingSubjectElement
 import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
@@ -68,6 +70,37 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         touchInvalidator.setOnTouchListener { _, _ ->
             return@setOnTouchListener true
         }
+
+        //광고 로드
+        val adRequest = AdRequest.Builder().build()
+        adBottom.loadAd(adRequest)
+        adBottom.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                Log.d("Ad", "광고 뜸")
+            }
+
+            override fun onAdFailedToLoad(errorCode : Int) {
+                Log.d("Ad", "광고 띄우기 실패, ErrorCode:$errorCode")
+            }
+
+            override fun onAdOpened() {
+                Log.d("Ad", "광고 열림")
+            }
+
+            override fun onAdClicked() {
+                Log.d("Ad", "광고 클릭됨")
+            }
+
+            override fun onAdLeftApplication() {
+                Log.d("Ad", "광고 나감")
+            }
+
+            override fun onAdClosed() {
+                Log.d("Ad", "광고 닫음")
+            }
+
+        }
+
     }
 
     override fun onResume() {
@@ -82,7 +115,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             "secCode=onlythiswivappcancallthisfetchnoticephpfile!", object : UIModifyAvailableListener(applicationContext) {
                 override fun taskCompleted(result: String?) {
                     super.taskCompleted(result)
-                    if(result == "NETWORK_CONNECTION_FAILED") return
+                    if(result!!.contains("NETWORK_CONNECTION")) return
                     try {
                         val jsonObject = JSONObject(result).getJSONObject("notice_info")
                         lblNotice.text = jsonObject.getString("title")
@@ -105,8 +138,8 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             object : UIModifyAvailableListener(applicationContext) {
                 override fun taskCompleted(result: String?) {
                     super.taskCompleted(result)
-                    if(result == "NETWORK_CONNECTION_FAILED") return
-                    when(result!!) {
+                    if(result!!.contains("NETWORK_CONNECTION")) return
+                    when(result) {
 
                         //인증시 통과
                         "AUTHORIZED" -> {
@@ -148,8 +181,8 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         val watchingSubjectsName = sf.getString("watching_subject_name", "")!!.split(";")
 
         //TODO(출시시 해당 로그 제거)
-        Log.d("watchingSubjects", sf.getString("watching_subject", "00000-00"))
-        Log.d("watchingSubjectsName", sf.getString("watching_subject_name", ""))
+        //Log.d("watchingSubjects", sf.getString("watching_subject", "00000-00"))
+        //Log.d("watchingSubjectsName", sf.getString("watching_subject_name", ""))
 
         for(i : Int in 0..(watchingSubjects.size - 1)) {
             (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.add(WatchingSubjectElement(watchingSubjectsName[i], watchingSubjects[i]))

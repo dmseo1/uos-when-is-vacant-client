@@ -52,7 +52,7 @@ class Join : AppCompatActivity(), View.OnClickListener {
                     override fun taskCompleted(result: String?) {
                         super.taskCompleted(result)
                         onLoadingState(View.GONE)
-                        if(result == "NETWORK_CONNECTION_FAILED") return
+                        if(result!!.contains("NETWORK_CONNECTION")) return
                         Toast.makeText(applicationContext, "인증메일을 재전송하였습니다. 반드시 가장 최근 메일의 인증코드를 입력해주세요.", Toast.LENGTH_SHORT).show()
 
                     }
@@ -75,7 +75,7 @@ class Join : AppCompatActivity(), View.OnClickListener {
                     object : UIModifyAvailableListener(applicationContext) {
                         override fun taskCompleted(result: String?) {
                             super.taskCompleted(result)
-                            if(result == "NETWORK_CONNECTION_FAILED") {
+                            if(result!!.contains("NETWORK_CONNECTION")) {
                                 onLoadingState(View.GONE)
                                 return
                             }
@@ -112,8 +112,8 @@ class Join : AppCompatActivity(), View.OnClickListener {
                                                             override fun taskCompleted(result: String?) {
                                                                 super.taskCompleted(result)
                                                                 onLoadingState(View.GONE)
-                                                                if(result == "NETWORK_CONNECTION_FAILED") return
-                                                                when(result!!.contains("DUP")) {
+                                                                if(result!!.contains("NETWORK_CONNECTION")) return
+                                                                when(result.contains("DUP")) {
                                                                     true -> {
                                                                         Toast.makeText(applicationContext, "인증이 완료되었습니다. 이전 기기 또는 어플리케이션에서의 인증은 해제됩니다.", Toast.LENGTH_SHORT).show()
                                                                     }

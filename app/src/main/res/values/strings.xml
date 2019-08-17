@@ -21,7 +21,8 @@
 
     <!-- activity_main.xml -->
     <string name="activity_main_lbl_unauth">인증이 만료되었습니다. 이 상태에서는 알림을 받을 수 없으며, 계속 이용하기 위해서는 앱을 종료 후 재인증하여야합니다.</string>
-    <string name="activity_main_lbl_watching_subject"> </string>
+    <string name="activity_main_lbl_watching_subject">알림 과목</string>
+    <string name="activity_main_img_ws_noti_desc">알림 과목 아이콘</string>
     <string name="activity_main_lbl_no_watching_subject">알림을 받고 있는 과목이 없습니다. 아래 \"과목 조회\"를 눌러 빈자리 알림을 설정하세요!</string>
     <string name="activity_main_btn_enroll">과목 조회</string>
     <string name="activity_main_btn_change">과목 조회</string>

@@ -55,6 +55,10 @@
         android:name="com.google.firebase.messaging.default_notification_icon"
         android:resource="@drawable/wivlogo" />
 
+        <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+        <meta-data
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="ca-app-pub-1929576815920713~4583913588"/>
 
         <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more. -->

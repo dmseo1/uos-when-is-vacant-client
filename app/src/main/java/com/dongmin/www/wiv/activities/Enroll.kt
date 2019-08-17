@@ -336,6 +336,9 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
             }
             btnSearch.id -> {
 
+                //조회 중 버튼 클릭 3초 제한 스레드
+
+
                 btnSearch.setOnClickListener(null)
 
                 //checkbox 가 조회 중간에 변해도 검색 조회 버튼을 누를 당시의 값을 유지하도록 하기 위함
@@ -425,14 +428,17 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                 HttpConnector("fetch_search_pos.php", "secCode=onlythiswivappcancallthisfetchsearchposphpfile!&userNo=${sf.getString("no", "0")}", object : UIModifyAvailableListener(applicationContext){
                     override fun taskCompleted(result: String?) {
                         super.taskCompleted(result)
-                        if(result == "NETWORK_CONNECTION_FAILED") {
+                        if(result!!.contains("NETWORK_CONNECTION")) {
                             progressBar.visibility = View.GONE
                             btnSearch.setOnClickListener(this@Enroll)
                             return
-                        } else if(result!!.contains("ERROR_CODE")) {
+                        } else if(result.contains("ERROR_CODE")) {
                             Toast.makeText(applicationContext, "예기치 않은 오류가 발생하였습니다. 관리자에게 문의하세요.", Toast.LENGTH_LONG).show()
                             return
                         }
+
+                        //기존 조회 내역 다시 비우기(실질적인 역할)
+                        (subjectListAdapter as SubjectListAdapter).subjectList.clear()
 
                         //교양, 전공에 따라 다르게 처리
                         if(targetSubjectType == "jeongong") {
@@ -475,7 +481,6 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                             }).execute()
                         }
                     }
-
                 }).execute()
 
 
