@@ -25,5 +25,27 @@ abstract class UIModifyAvailableListener(private val context : Context) {
                 return
             }
         }
+
+        //포함성
+        when(result.contains("NETWORK_CONNECTION_ERROR_CODE")) {
+            true -> {
+                Toast.makeText(context, "서버 측 처리 실패입니다. 관리자에게 문의하세요($result)", Toast.LENGTH_LONG).show()
+                return
+            }
+            false -> {
+
+            }
+        }
+
+        //기타 처리
+        when(result.contains("NETWORK_CONNECTION")) {
+            true -> {
+                Toast.makeText(context, "예기치 않은 오류입니다. 관리자에게 문의하세요($result)", Toast.LENGTH_LONG).show()
+                return
+            }
+            false -> {
+
+            }
+        }
     }
 }

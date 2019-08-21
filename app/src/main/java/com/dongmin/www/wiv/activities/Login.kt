@@ -57,7 +57,10 @@ class Login : AppCompatActivity(), View.OnClickListener{
                             super.taskCompleted(result)
                             pgBar.visibility = View.GONE
                             opaWindow.visibility = View.GONE
-                            if(result!!.contains("NETWORK_CONNECTION")) return
+                            if(result!!.contains("NETWORK_CONNECTION")) {
+                                btnNext.setOnClickListener(this@Login)
+                                return
+                            }
                             //단, 어뷰징 적발된 이메일로 가입 시도하는 경우 막는다
                             if(result == "DENIED_BY_ABUSING") {
                                 Toast.makeText(applicationContext, "어뷰징 행위로 인해 인증이 제한된 이메일입니다.", Toast.LENGTH_SHORT).show()
@@ -69,7 +72,6 @@ class Login : AppCompatActivity(), View.OnClickListener{
                         }
                     }).execute()
                 }
-
             }
         }
     }

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.dongmin.www.wiv.R
+import com.dongmin.www.wiv.activities.Init.StaticData.NUM_MAX_WATCHING_SUBJECTS
 import com.dongmin.www.wiv.activities.Init.StaticData.sf
 import com.dongmin.www.wiv.adapters.SubjectListAdapter
 import com.dongmin.www.wiv.adapters.WatchingSubjectListAdapter
@@ -66,39 +67,41 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         btnSettings.setOnClickListener(this)
 
         //터치 무효화창 초기 설정
-        touchInvalidator.visibility = View.GONE
-        touchInvalidator.setOnTouchListener { _, _ ->
+        opaWindow.visibility = View.GONE
+        opaWindow.setOnTouchListener { _, _ ->
             return@setOnTouchListener true
         }
+
+        //알림 개수 표시
+        updateWatchingSubjectCnt()
 
         //광고 로드
         val adRequest = AdRequest.Builder().build()
         adBottom.loadAd(adRequest)
         adBottom.adListener = object : AdListener() {
             override fun onAdLoaded() {
-                Log.d("Ad", "광고 뜸")
+                //Log.d("Ad", "광고 뜸")
             }
 
             override fun onAdFailedToLoad(errorCode : Int) {
-                Log.d("Ad", "광고 띄우기 실패, ErrorCode:$errorCode")
+                //Log.d("Ad", "광고 띄우기 실패, ErrorCode:$errorCode")
             }
 
             override fun onAdOpened() {
-                Log.d("Ad", "광고 열림")
+                //Log.d("Ad", "광고 열림")
             }
 
             override fun onAdClicked() {
-                Log.d("Ad", "광고 클릭됨")
+                //Log.d("Ad", "광고 클릭됨")
             }
 
             override fun onAdLeftApplication() {
-                Log.d("Ad", "광고 나감")
+                //Log.d("Ad", "광고 나감")
             }
 
             override fun onAdClosed() {
-                Log.d("Ad", "광고 닫음")
+                //Log.d("Ad", "광고 닫음")
             }
-
         }
 
     }
@@ -127,7 +130,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                         //공지 내용이 있고 나서야 공지가 클릭이 된다
                         lNotice.setOnClickListener(this@Main)
                     } catch(e : JSONException) {
-                        Log.e("WIV", "공지사항 불러오기 실패")
+                      //  Log.e("WIV", "공지사항 불러오기 실패")
                     }
                 }
         }).execute()
@@ -146,7 +149,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                             //버튼 활성화
                             btnEnrollChange.setOnClickListener(this@Main)
                             lblUnauth.visibility = View.GONE
-                            touchInvalidator.visibility = View.GONE
+                            opaWindow.visibility = View.GONE
                         }
 
                         //인증받지 못할 경우
@@ -155,7 +158,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                             lblUnauth.visibility = View.VISIBLE
 
                             //터치 무효화 가동
-                            touchInvalidator.visibility = View.VISIBLE
+                            opaWindow.visibility = View.VISIBLE
 
                             //버튼 비활성화
                             btnEnrollChange.setOnClickListener(null)
@@ -188,7 +191,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.add(WatchingSubjectElement(watchingSubjectsName[i], watchingSubjects[i]))
         }
 
-        Log.d("LENGTH", (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.size.toString())
+     //   Log.d("LENGTH", (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.size.toString())
 
         watchingSubjectsListAdapter.notifyDataSetChanged()
     }
@@ -197,15 +200,32 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         lblNoWatchingSubject.visibility = View.VISIBLE
     }
 
+    override fun invalidateTouch(visibility : Int) {
+        opaWindow.visibility = visibility
+        pgBar.visibility = visibility
+    }
+
+    override fun updateWatchingSubjectCnt() {
+        lblWatchingSubject.text = resources.getString(R.string.activity_main_lbl_watching_subject,
+            (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.size.toString(),
+            NUM_MAX_WATCHING_SUBJECTS.toString())
+    }
+
+    override fun finishActivity() {
+        finish()
+    }
+
 
     override fun onClick(v: View?) {
         when(v!!.id) {
             lNotice.id -> {
                 startActivity(noticeIntent)
             }
-
             btnEnrollChange.id -> {
                 startActivityForResult(Intent(this@Main, Enroll::class.java), REQUEST_CODE_ENROLL)
+            }
+            btnSettings.id -> {
+                Toast.makeText(this@Main, "준비중입니다!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -217,6 +237,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                     RESULT_CODE_UI -> {
                         lblNoWatchingSubject.visibility = View.GONE
                         updateWatchingSubjectsList()
+                        updateWatchingSubjectCnt()
                         btnEnrollChange.text = resources.getString(R.string.activity_main_btn_change)
                     }
                     RESULT_CODE_FINISH -> {
@@ -226,5 +247,4 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             }
         }
     }
-
 }

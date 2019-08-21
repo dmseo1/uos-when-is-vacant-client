@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 import com.dongmin.www.wiv.R
 import com.dongmin.www.wiv.elements.SubDepartment
@@ -63,10 +64,9 @@ class Init : AppCompatActivity() {
                     return
                 }
 
-
-
                 //광고 초기화
                 MobileAds.initialize(this@Init, "ca-app-pub-1929576815920713~4583913588")
+
 
                 try {
                     val jsonObject = JSONObject(result).getJSONObject("app_variables")
@@ -75,20 +75,21 @@ class Init : AppCompatActivity() {
 
                     when(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         true -> {
-                            if(minVersionCode > packageManager.getPackageInfo(packageName, 0).longVersionCode) {
+                            if (minVersionCode > packageManager.getPackageInfo(packageName, 0).longVersionCode) {
                                 Toast.makeText(applicationContext, "어플리케이션을 업데이트해주세요.", Toast.LENGTH_SHORT).show()
                                 finish()
                                 return
-                             }
+                            }
                         }
                         false -> {
-                            if(minVersionCode > packageManager.getPackageInfo(packageName, 0).versionCode) {
+                            if (minVersionCode > packageManager.getPackageInfo(packageName, 0).versionCode) {
                                 Toast.makeText(applicationContext, "어플리케이션을 업데이트해주세요.", Toast.LENGTH_SHORT).show()
                                 finish()
                                 return
                             }
                         }
                     }
+
 
                     //알림 과목을 서버 사이드에서 초기화 가능하도록 함
                     if(sf.getBoolean("is_login", false)) {
@@ -105,8 +106,9 @@ class Init : AppCompatActivity() {
                             sf.getString("watching_subject_delete_triggered", "0") == "0") {
 
                             //알림 구독 해제
+                         //   Log.e("왓칭 과목", sf.getString("watching_subject", "00000-00"))
                             val ws = sf.getString("watching_subject", "00000-00")!!.split(";")
-                            for(i : Int in 0..(ws.size)) {
+                            for(i : Int in 0..(ws.size - 1)) {
                                 FirebaseMessaging.getInstance().unsubscribeFromTopic(ws[i])
                             }
 
@@ -126,44 +128,14 @@ class Init : AppCompatActivity() {
                     return
                 }
 
-
-                //학과 정보 가져온 후 로그인 상태 체크, 이후 로그인 페이지 또는 메인 페이지를 띄운다
-                HttpConnector("fetch_dept_info.php", "secCode=onlythiswivappcancallthisfetchdeptinfophpfile!", object : UIModifyAvailableListener(applicationContext) {
-                    override fun taskCompleted(result: String?) {
-                        super.taskCompleted(result)
-                        if(result!!.contains("NETWORK_CONNECTION")) {
-                            finish()
-                            return
-                        }
-                        subDepartments.clear()
-                        departments.clear()
-                        for(i : Int in 0..100) {
-                            try {
-                                val jsonString = JSONObject(result).getJSONArray("dept_info").getJSONObject(i).toString()
-                                val subDepartment = SubDepartment().fillFromJSON(jsonString)
-                            subDepartments.add(subDepartment)
-                            departments.add(subDepartment.deptName)
-                        } catch(e : Exception) {
-                            break
-                        }
-                    }
-
-                    subDepartments.sortBy {
-                        fun selector(sd : SubDepartment) : Int = sd.no
-                            selector(it)}
-
-                        departments = departments.distinct() as ArrayList<String>
-
-                        if(sf.getBoolean("is_login", false)) {
-
-                            //Log.d("FetchedInfo", "${userInfo.userNo}/${userInfo.userEmail}/${userInfo.userToken}")
-                            startActivity(Intent(this@Init, Main::class.java))
-                        } else {
-                            startActivity(Intent(this@Init, Login::class.java))
-                        }
-                        finish()
-                    }
-                }).execute()    //확인 후 로그인
+                //로그인 되어있는지 체크
+                if(sf.getBoolean("is_login", false)) {
+                    //Log.d("FetchedInfo", "${userInfo.userNo}/${userInfo.userEmail}/${userInfo.userToken}")
+                    startActivity(Intent(this@Init, Main::class.java))
+                } else {
+                    startActivity(Intent(this@Init, Login::class.java))
+                }
+                finish()
             }
         }).execute()    //버전체크
     }

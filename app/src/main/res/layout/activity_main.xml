@@ -12,9 +12,10 @@
             android:text="@string/activity_main_btn_enroll"
             android:textColor="#ffffff"
             android:textSize="30sp"
+            android:stateListAnimator="@null"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            android:layout_marginBottom="66dp" app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_marginBottom="70dp" app:layout_constraintBottom_toBottomOf="parent"/>
 
 
     <ImageView
@@ -156,13 +157,27 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View android:id="@+id/touchInvalidator"
+    <View android:id="@+id/opaWindow"
           android:layout_width="match_parent" android:layout_height="match_parent"
+          android:background="@color/colorDarkTextColor"
+          android:alpha="0.4"
+          android:visibility="gone"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintTop_toTopOf="parent" android:visibility="gone"
+          app:layout_constraintTop_toTopOf="parent"
     />
+
+    <ProgressBar android:id="@+id/pgBar"
+                 android:layout_width="100dp" android:layout_height="100dp"
+                 android:indeterminateDrawable="@drawable/round_progress_bar_dark_text_color"
+                 android:visibility="gone"
+                 app:layout_constraintTop_toTopOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintBottom_toBottomOf="parent"/>
+
+
 
     <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -177,6 +192,8 @@
             ads:adSize="SMART_BANNER"
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
     </com.google.android.gms.ads.AdView>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

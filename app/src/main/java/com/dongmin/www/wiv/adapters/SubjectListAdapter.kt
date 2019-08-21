@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,15 +82,6 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
 
             holder.btnEnroll.setOnClickListener {
 
-                //최대 등록 가능 개수 초과 확인
-                if(sf.getString("watching_subject", "00000-00") != "00000-00" &&
-                    sf.getString("watching_subject", "00000-00")!!.split(";").size >= NUM_MAX_WATCHING_SUBJECTS) {
-                    Toast.makeText(context, "최대 알림 등록 개수를 초과하였습니다. 기존 등록 과목 삭제 후 이용하세요.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                //로딩 화면 띄우기
-                callbackToEnroll!!.onLoadingState(View.VISIBLE)
 
                 //어댑터 내부 변수 직접 참조로 인한 오류를 막기 위해 새 변수 지정
                 val pos = holder.adapterPosition
@@ -99,6 +91,29 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                 val watchingSubjectDiv = subjectList[pos].subjectDiv
                 val watchingSubjectName = subjectList[pos].subjectNm
 
+
+                //이미 알림을 받고 있는 과목인지 확인
+                val ws = sf.getString("watching_subject", "00000-00")!!.split(";")
+                for(i : Int in 0..(ws.size - 1)) {
+                    if(ws[i] == watchingSubject) {
+                        Toast.makeText(context, "이미 알림 등록한 과목입니다.", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                }
+
+                //최대 등록 가능 개수 초과 확인
+                if(sf.getString("watching_subject", "00000-00") != "00000-00" &&
+                    sf.getString("watching_subject", "00000-00")!!.split(";").size >= NUM_MAX_WATCHING_SUBJECTS) {
+                    Toast.makeText(context, "최대 알림 등록 개수를 초과하였습니다. 기존 등록 과목 삭제 후 이용하세요.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                //로딩 화면 띄우기
+                callbackToEnroll!!.onLoadingState(View.VISIBLE)
+                callbackToEnroll!!.handleBackPress(true)
+
+
+
                 //인증 상태 체크
                 HttpConnector("user_auth_check.php",
                     "secCode=onlythiswivappcancallthisuserauthcheckphpfile!&email=${sf.getString("email", "")}&token=${sf.getString("token", "")}",
@@ -107,6 +122,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                             super.taskCompleted(result)
                             if(result!!.contains("NETWORK_CONNECTION")) {
                                 callbackToEnroll!!.onLoadingState(View.GONE)
+                                callbackToEnroll!!.handleBackPress(false)
                                 return
                             }
                             when(result) {
@@ -125,6 +141,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                         .addOnCompleteListener { task ->
 
                                             callbackToEnroll!!.onLoadingState(View.GONE)
+                                            callbackToEnroll!!.handleBackPress(false)
                                             if(task.isSuccessful) {
                                                 //데이터베이스에 해당 정보 등록
 
@@ -134,34 +151,50 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                                     false -> ""
                                                 }
 
+                                                //sf 저장 자료 생성
+                                                val watchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
+                                                var modifiedWatchingSubjects = sf.getString("watching_subject", "00000-00")!!
+                                                var modifiedWatchingSubjectsName = sf.getString("watching_subject_name", "")!!
+                                                if(watchingSubjects[0] == "00000-00") { //기존 등록된 과목이 없는 경우
+                                                    modifiedWatchingSubjects = watchingSubject
+                                                    modifiedWatchingSubjectsName = watchingSubjectName
+                                                } else {    //기존 등록된 과목이 있는 경우
+                                                    modifiedWatchingSubjects += ";$watchingSubject"
+                                                    modifiedWatchingSubjectsName += ";$watchingSubjectName"
+                                                }
+
+                                                //sf 갱신
+                                                val sfEditor = sf.edit()
+                                                sfEditor.putString("watching_subject", modifiedWatchingSubjects)
+                                                sfEditor.putString("watching_subject_name", modifiedWatchingSubjectsName)
+                                                sfEditor.apply()
+
                                                 //등록 정보 전송
                                                 HttpConnector("enroll_watching_subject.php",
-                                                    "secCode=onlythiswivappcancallthisenrollwatchingsubjectfile!&email=${sf.getString("email", "")}&subjectNo=$watchingSubjectNo&classDiv=$watchingSubjectClassDiv&subjectDiv=$watchingSubjectDiv&subjectName=$watchingSubjectName$addCond",
+                                                    "secCode=onlythiswivappcancallthisenrollwatchingsubjectfile!&email=${sf.getString("email", "")}&watchingSubjects=$modifiedWatchingSubjects&subjectNo=$watchingSubjectNo&classDiv=$watchingSubjectClassDiv&subjectDiv=$watchingSubjectDiv&subjectName=$watchingSubjectName$addCond",
                                                     object : UIModifyAvailableListener(context!!) {
                                                         override fun taskCompleted(result: String?) {
                                                             super.taskCompleted(result)
-                                                            if(result!!.contains("NETWORK_CONNECTION")) return
+                                                            //최종 등록 과정에서 실패한 경우, 인증 정보를 제거한다
+                                                            if(result!!.contains("NETWORK_CONNECTION")) {
+                                                                Toast.makeText(context, "부정한 사용이 감지되었습니다. 재인증이 필요합니다.", Toast.LENGTH_SHORT).show()
+                                                                sfEditor.putBoolean("is_login", false)
+                                                                sfEditor.putString("watching_subject", "00000-00")
+                                                                sfEditor.putString("watching_subject_name", "")
+                                                                sfEditor.apply()
 
-                                                            //sf 에 저장
-                                                            val sfEditor = sf.edit()
+                                                                callbackToEnroll!!.finishActivity()
 
-                                                            val watchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
-                                                            if(watchingSubjects[0] == "00000-00") { //기존 등록된 과목이 없는 경우
-                                                                sfEditor.putString("watching_subject", watchingSubject)
-                                                                sfEditor.putString("watching_subject_name", watchingSubjectName)
-                                                            } else {    //기존 등록된 과목이 있는 경우
-                                                                sfEditor.putString("watching_subject", "${sf.getString("watching_subject", "00000-00")};$watchingSubject")
-                                                                sfEditor.putString("watching_subject_name", "${sf.getString("watching_subject_name", "")};$watchingSubjectName")
+                                                                return
                                                             }
-
-                                                            sfEditor.apply()
-
 
                                                             //메인 액티비티 변경을 위한 인텐트 result 전달
                                                             (context as AppCompatActivity).setResult(11, Intent().putExtra("subject_name", watchingSubjectName).putExtra("subject_no", watchingSubjectNo).putExtra("class_div", watchingSubjectClassDiv))
 
+
                                                             //토스트 메시지 표시
                                                             Toast.makeText(context, "과목 알림 설정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                                                          //  Log.e("왓칭 과목", sf.getString("watching_subject", "00000-00"))
                                                         }
                                                     }
                                                 ).execute()
@@ -174,6 +207,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                 "UNAUTHORIZED" -> {
 
                                     callbackToEnroll!!.onLoadingState(View.GONE)
+                                    callbackToEnroll!!.handleBackPress(false)
 
                                     //자동 로그인 해제
                                     val sfEditor = sf.edit()
@@ -216,6 +250,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
 
     interface CallbackToEnroll {
         fun onLoadingState(visibility : Int)
+        fun handleBackPress(invalidate : Boolean)
         fun finishActivity()
     }
 

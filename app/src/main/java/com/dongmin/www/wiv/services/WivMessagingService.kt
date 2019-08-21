@@ -27,33 +27,47 @@ class WivMessagingService : FirebaseMessagingService() {
 
         val sf = getSharedPreferences("app_info", MODE_PRIVATE)
 
-        Log.d("메시지 도착", "메시지 도착!!!")
 
-        //왓칭 중인 과목인지 최종 확인
-        val userWatchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
-        for(i : Int in 0..(userWatchingSubjects.size - 1)) {
-            if(remoteMessage!!.data["topic"] == userWatchingSubjects[i]) {
+       // Log.d("메시지 도착", "메시지 도착!!!")
 
-                //인증 최종 확인
-                HttpConnector("user_auth_check.php",
-                    "secCode=onlythiswivappcancallthisuserauthcheckphpfile!&email=${sf.getString("email", "")}&token=${sf.getString("token","")}",
-                    object : UIModifyAvailableListener(applicationContext) {
-                        override fun taskCompleted(result: String?) {
-                            if(result == "NETWORK_CONNECTION_FAILED") return
-                            when(result!!) {
-                                "AUTHORIZED" -> {
-                                    //최종 인증을 통과한 기기에 대해서만 알림을 보낸다
-                                    sendNotification(remoteMessage)
+        when(remoteMessage!!.data["topic"]) {
+
+            "wiv_notice" -> {
+                sendNotification(remoteMessage)
+            }
+
+            else -> {
+                //로그인 상태가 아니면 알림을 받지 못한다
+                if(!sf.getBoolean("is_login", false)) return
+                //왓칭 중인 과목인지 최종 확인
+                val userWatchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
+                for(i : Int in 0..(userWatchingSubjects.size - 1)) {
+                    if(remoteMessage.data["topic"] == userWatchingSubjects[i]) {
+
+                        //인증 최종 확인
+                        HttpConnector("user_auth_check.php",
+                            "secCode=onlythiswivappcancallthisuserauthcheckphpfile!&email=${sf.getString("email", "")}&token=${sf.getString("token","")}",
+                            object : UIModifyAvailableListener(applicationContext) {
+                                override fun taskCompleted(result: String?) {
+                                    if(result == "NETWORK_CONNECTION_FAILED") return
+                                    when(result!!) {
+                                        "AUTHORIZED" -> {
+                                            //최종 인증을 통과한 기기에 대해서만 알림을 보낸다
+                                            sendNotification(remoteMessage)
+                                        }
+                                        "UNAUTHORIZED" -> {
+                                            Log.e("WIV", "미인증 기기")
+                                        }
+                                    }
                                 }
-                                "UNAUTHORIZED" -> {
-                                    Log.e("WIV", "미인증 기기")
-                                }
-                            }
-                        }
-                    }).execute()
-                break
+                            }).execute()
+                        break
+                    }
+                }
             }
         }
+
+
     }
 
     override fun onNewToken(token : String?) {
@@ -70,7 +84,7 @@ class WivMessagingService : FirebaseMessagingService() {
                     .setContentText(remoteMessage.data["body"])
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setDefaults(Notification.DEFAULT_ALL)
-                    .setLargeIcon((ContextCompat.getDrawable(applicationContext, R.drawable.wivlogo) as BitmapDrawable).bitmap)
+                    .setLargeIcon((ContextCompat.getDrawable(applicationContext, R.drawable.wivlogo2) as BitmapDrawable).bitmap)
                     //.setLargeIcon((resources.getDrawable(R.drawable.wivlogo) as BitmapDrawable).bitmap)
                     .setPriority(NotificationManager.IMPORTANCE_HIGH)
                     .setAutoCancel(true)
@@ -83,7 +97,7 @@ class WivMessagingService : FirebaseMessagingService() {
                     .setContentText(remoteMessage.data["body"])
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setDefaults(Notification.DEFAULT_ALL)
-                    .setLargeIcon((ContextCompat.getDrawable(applicationContext, R.drawable.wivlogo) as BitmapDrawable).bitmap)
+                    .setLargeIcon((ContextCompat.getDrawable(applicationContext, R.drawable.wivlogo2) as BitmapDrawable).bitmap)
                     //.setLargeIcon((applicationContext.getDrawable(R.drawable.wivlogo) as BitmapDrawable).bitmap)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)

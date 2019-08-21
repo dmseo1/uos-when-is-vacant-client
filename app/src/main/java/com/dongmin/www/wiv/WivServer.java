@@ -42,8 +42,6 @@ public class WivServer {
         //어디서? 내 DB 에서
 
         while(true) {
-
-
             //watching subject 목록 불러오기
             Thread resultFetcher = new Thread(new Runnable() {
                 @Override

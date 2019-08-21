@@ -43,7 +43,7 @@ class HttpConnectorOthers constructor(private val path : String, private val par
 
 
         //TODO: 호출 파일명과 파라미터 확인(출시 시 제거)
-        Log.d(path, param)
+       // Log.d(path, param)
 
         try {
             val url = URL(this.path)
@@ -96,7 +96,7 @@ class HttpConnectorOthers constructor(private val path : String, private val par
             }
 
             data = buff.toString().trim { it <= ' ' }
-            Log.e("RECV DATA", data)
+            //Log.e("RECV DATA", data)
             result = data
 
         } catch (e: MalformedURLException) {

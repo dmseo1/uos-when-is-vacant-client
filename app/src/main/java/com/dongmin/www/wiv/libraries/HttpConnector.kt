@@ -44,13 +44,13 @@ class HttpConnector constructor(private val path : String, private val param : S
         var result = ""
 
         //TODO: 호출 파일명과 파라미터 확인(출시 시 제거)
-        Log.d(path, param)
+        //Log.d(path, param)
 
         try {
             val url = URL(basicURL + this.path)
             val conn = url.openConnection() as HttpURLConnection
 
-            Log.d("URL: ", url.toString())
+           // Log.d("URL: ", url.toString())
 
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
             conn.requestMethod = "POST"
@@ -99,7 +99,7 @@ class HttpConnector constructor(private val path : String, private val param : S
 
             //TODO(출시시 해당 로그 제거)
             //받은 데이터 출력
-            Log.e("RECV DATA", data)
+            //Log.e("RECV DATA", data)
 
             result = data
         } catch (e: MalformedURLException) {
@@ -116,6 +116,8 @@ class HttpConnector constructor(private val path : String, private val param : S
 
     override fun onPostExecute(result: String) {
         super.onPostExecute(result)
+
+        //Log.d("요기도", "안와요?????")
         if(timeOutThread.isAlive) {
             timeOutThread.interrupt()
         }
