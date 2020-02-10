@@ -2,8 +2,8 @@ package com.dongmin.www.wiv.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -125,8 +125,15 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                 callbackToEnroll!!.handleBackPress(false)
                                 return
                             }
+
+                            /*
                             when(result) {
                                 "AUTHORIZED" -> {
+
+                                */
+
+
+
                                     //이미 해당 유저가 알림을 받고 있는 과목인지 체크
                                     //if(sf.getString("watching_subject", "00000-00") == "${subjectList[pos].subjectNo}-${subjectList[pos].classDiv}") {
                                     //    Toast.makeText(context, "이미 알림을 받고 있는 과목입니다.", Toast.LENGTH_SHORT).show()
@@ -169,12 +176,15 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                                 sfEditor.putString("watching_subject_name", modifiedWatchingSubjectsName)
                                                 sfEditor.apply()
 
+
+
                                                 //등록 정보 전송
                                                 HttpConnector("enroll_watching_subject.php",
                                                     "secCode=onlythiswivappcancallthisenrollwatchingsubjectfile!&email=${sf.getString("email", "")}&watchingSubjects=$modifiedWatchingSubjects&subjectNo=$watchingSubjectNo&classDiv=$watchingSubjectClassDiv&subjectDiv=$watchingSubjectDiv&subjectName=$watchingSubjectName$addCond",
                                                     object : UIModifyAvailableListener(context!!) {
                                                         override fun taskCompleted(result: String?) {
                                                             super.taskCompleted(result)
+                                                            /*
                                                             //최종 등록 과정에서 실패한 경우, 인증 정보를 제거한다
                                                             if(result!!.contains("NETWORK_CONNECTION")) {
                                                                 Toast.makeText(context, "부정한 사용이 감지되었습니다. 재인증이 필요합니다.", Toast.LENGTH_SHORT).show()
@@ -187,6 +197,7 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
 
                                                                 return
                                                             }
+                                                            */
 
                                                             //메인 액티비티 변경을 위한 인텐트 result 전달
                                                             (context as AppCompatActivity).setResult(11, Intent().putExtra("subject_name", watchingSubjectName).putExtra("subject_no", watchingSubjectNo).putExtra("class_div", watchingSubjectClassDiv))
@@ -195,16 +206,24 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                                             //토스트 메시지 표시
                                                             Toast.makeText(context, "과목 알림 설정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                                                           //  Log.e("왓칭 과목", sf.getString("watching_subject", "00000-00"))
+
+
                                                         }
                                                     }
+
                                                 ).execute()
+
+
                                             } else {
                                                 Toast.makeText(context, "등록에 실패하였습니다. 인터넷 연결 상태 확인 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                                             }
                                         }
+
+                            /*
                                 }
 
                                 "UNAUTHORIZED" -> {
+
 
                                     callbackToEnroll!!.onLoadingState(View.GONE)
                                     callbackToEnroll!!.handleBackPress(false)
@@ -221,7 +240,10 @@ class SubjectListAdapter(context : Context) : RecyclerView.Adapter<SubjectListAd
                                     (context as AppCompatActivity).setResult(9999, null)
                                     callbackToEnroll!!.finishActivity()
                                 }
+
+
                             }
+                            */
                         }
                     }).execute()
             }

@@ -1,7 +1,7 @@
 package com.dongmin.www.wiv.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.dongmin.www.wiv.R
 
 class Settings : AppCompatActivity() {

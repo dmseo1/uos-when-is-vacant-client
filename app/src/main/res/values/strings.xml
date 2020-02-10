@@ -24,6 +24,7 @@
     <string name="activity_main_lbl_watching_subject">알림 과목(%1$s/%2$s)</string>
     <string name="activity_main_img_ws_noti_desc">알림 과목 아이콘</string>
     <string name="activity_main_lbl_no_watching_subject">알림을 받고 있는 과목이 없습니다. 아래 \"과목 조회\"를 눌러 빈자리 알림을 설정하세요!</string>
+    <string name="activity_main_btn_remove_all_watching_subject">모두 해제</string>
     <string name="activity_main_btn_enroll">과목 조회</string>
     <string name="activity_main_btn_change">과목 조회</string>
     <string name="activity_main_btn_settings_desc">설정 버튼</string>
@@ -48,6 +49,7 @@
     <string name="activity_enroll_chk_exclude_volunteer_subject">사회봉사 제외</string>
     <string name="activity_enroll_chk_exclude_f_language_subject">제2외국어 제외</string>
     <string name="activity_enroll_chk_exclude_consult_subject">학업설계상담 제외</string>
+    <string name="activity_enroll_btn_help_desc">도움말 버튼</string>
 
     <string name="activity_enroll_btn_filter_hide">▲ 필터 숨기기</string>
     <string name="activity_enroll_btn_filter_show">▼ 필터 보이기</string>
@@ -69,6 +71,12 @@
     <string name="popup_dup_email_auth_check_btn_cancel">취소</string>
     <string name="popup_dup_email_auth_check_btn_continue">계속</string>
 
+    <!-- popup_filter_help.xml -->
+    <string name="popup_filter_help_experiment">(물리학/화학/생물학)및실험 1, 2과목, 일반(물리학/화학/생물학)및실험, 일반물리학및실습 과목을 조회 결과에서 제외합니다. 창의탐구세미나 1, 2 과목도 같이 제외됩니다.</string>
+    <string name="popup_filter_help_engineer">교양 세부영역이 공학소양인 과목을 조회 결과에서 제외합니다.</string>
+    <string name="popup_filter_help_volunteer">사회봉사 1, 2과목을 조회 결과에서 제외합니다.</string>
+    <string name="popup_filter_help_f_language">중국어, 일본어, 스페인어, 베트남어, 러시아어, 독일어, 불어, 라틴어 관련 어학 과목을 조회 결과에서 제외합니다.</string>
+    <string name="popup_filter_help_consult">학업설계상담 1, 2과목을 조회 결과에서 제외합니다.</string>
 
     <!-- element_subject.xml -->
     <string name="element_subject_first_row">%1$s(%2$s-%3$s분반)</string>

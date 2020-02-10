@@ -2,9 +2,9 @@ package com.dongmin.www.wiv.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,12 +17,13 @@ import com.dongmin.www.wiv.elements.SubjectElement
 import com.dongmin.www.wiv.elements.WatchingSubjectElement
 import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
+//import com.google.android.gms.ads.AdListener
+//import com.google.android.gms.ads.AdRequest
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapter.Callback {
 
@@ -31,6 +32,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
     private val REQUEST_CODE_ENROLL = 2
     private val RESULT_CODE_FINISH = 9999
 
+    private lateinit var key : Any
     private lateinit var noticeIntent : Intent
 
     private lateinit var watchingSubjectsListAdapter : RecyclerView.Adapter<WatchingSubjectListAdapter.ViewHolder>
@@ -39,6 +41,8 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
     override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        key = Any()
 
         sf = getSharedPreferences("app_info", MODE_PRIVATE)
 
@@ -63,8 +67,14 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             btnEnrollChange.text = resources.getString(R.string.activity_main_btn_change)
         }
 
+        //모두 삭제 버튼 동작
+        btnRemoveAllWatchingSubjects.setOnClickListener(this)
+
         //설정 버튼 동작
         btnSettings.setOnClickListener(this)
+
+        //과목 검색 버튼 동작
+        btnEnrollChange.setOnClickListener(this@Main)
 
         //터치 무효화창 초기 설정
         opaWindow.visibility = View.GONE
@@ -76,33 +86,33 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
         updateWatchingSubjectCnt()
 
         //광고 로드
-        val adRequest = AdRequest.Builder().build()
-        adBottom.loadAd(adRequest)
-        adBottom.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                //Log.d("Ad", "광고 뜸")
-            }
-
-            override fun onAdFailedToLoad(errorCode : Int) {
-                //Log.d("Ad", "광고 띄우기 실패, ErrorCode:$errorCode")
-            }
-
-            override fun onAdOpened() {
-                //Log.d("Ad", "광고 열림")
-            }
-
-            override fun onAdClicked() {
-                //Log.d("Ad", "광고 클릭됨")
-            }
-
-            override fun onAdLeftApplication() {
-                //Log.d("Ad", "광고 나감")
-            }
-
-            override fun onAdClosed() {
-                //Log.d("Ad", "광고 닫음")
-            }
-        }
+//        val adRequest = AdRequest.Builder().build()
+//        adBottom.loadAd(adRequest)
+//        adBottom.adListener = object : AdListener() {
+//            override fun onAdLoaded() {
+//                //Log.d("Ad", "광고 뜸")
+//            }
+//
+//            override fun onAdFailedToLoad(errorCode : Int) {
+//                //Log.d("Ad", "광고 띄우기 실패, ErrorCode:$errorCode")
+//            }
+//
+//            override fun onAdOpened() {
+//                //Log.d("Ad", "광고 열림")
+//            }
+//
+//            override fun onAdClicked() {
+//                //Log.d("Ad", "광고 클릭됨")
+//            }
+//
+//            override fun onAdLeftApplication() {
+//                //Log.d("Ad", "광고 나감")
+//            }
+//
+//            override fun onAdClosed() {
+//                //Log.d("Ad", "광고 닫음")
+//            }
+//        }
 
     }
 
@@ -135,6 +145,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                 }
         }).execute()
 
+        /*
         //메인 화면에 나올 때마다 인증 체크를 한다
         HttpConnector("user_auth_check.php",
             "secCode=onlythiswivappcancallthisuserauthcheckphpfile!&email=${sf.getString("email", "")}&token=${sf.getString("token", "")}",
@@ -173,6 +184,7 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
                     }
                 }
             }).execute()
+            */
     }
 
     //왓칭과목의 리스트를 업데이트하는 메서드. 초기접속 또는 Enroll 에서 과목을 등록할 때 호출.
@@ -227,19 +239,86 @@ class Main : AppCompatActivity(), View.OnClickListener, WatchingSubjectListAdapt
             btnSettings.id -> {
                 Toast.makeText(this@Main, "준비중입니다!", Toast.LENGTH_SHORT).show()
             }
+
+
+            //알림받는 과목 전체를 삭제
+            btnRemoveAllWatchingSubjects.id -> {
+
+                if((watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.size == 0) {
+                    Toast.makeText(applicationContext, "알림 해제할 과목이 없습니다", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                invalidateTouch(View.VISIBLE)
+
+                //watching subject parsing
+                val watchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
+                val watchingSubjectNames = sf.getString("watching_subject_name", "")!!.split(";")
+
+
+                var numRemoved = 0
+                for (i: Int in 0 until watchingSubjects.size) {
+                    //알림 구독 삭제. synchronized 옵션을 주어 과목 단위로 삭제되게 한다
+                    synchronized(key) {
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(watchingSubjects[i])
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    //sf 수정
+                                    watchingSubjects.joinToString(";")
+                                    val sfEditor = sf.edit()
+                                    if(i == watchingSubjects.size - 1) {
+                                        sfEditor.putString("watching_subject", "00000-00")
+                                        sfEditor.putString("watching_subject_name", "")
+
+                                        //알림 과목 없음 메인화면 메시지 띄우기
+                                        onNoWatchingSubject()
+
+                                        //메시지 띄우기
+                                        Toast.makeText(applicationContext, "모든 과목 알림이 해제되었습니다.", Toast.LENGTH_SHORT).show()
+
+                                        //터치 가능하도록 변경
+                                        invalidateTouch(View.GONE)
+                                    } else {
+                                        sfEditor.putString("watching_subject", watchingSubjects.subList(i + 1, watchingSubjects.size).joinToString(";"))
+                                        sfEditor.putString("watching_subject_name", watchingSubjectNames.subList(i + 1, watchingSubjectNames.size).joinToString(";"))
+                                    }
+                                    sfEditor.apply()
+
+                                    //리스트 수정
+                                    (watchingSubjectsListAdapter as WatchingSubjectListAdapter).watchingSubjectsList.removeAt(0)
+
+                                    //리스트 새로고침
+                                    watchingSubjectsListAdapter.notifyDataSetChanged()
+
+                                    //알림 과목수 레이블 업데이트
+                                    updateWatchingSubjectCnt()
+
+                                    //삭제된 개수 증가
+                                    numRemoved ++
+
+                                } else {
+                                    Toast.makeText(applicationContext, "과목 알림 해제 중 오류가 발생하였습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                                    invalidateTouch(View.GONE)
+                                }
+                            }
+                    }
+                }
+
+
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when(requestCode) {
             REQUEST_CODE_ENROLL -> {
-                when(resultCode) {
-                    RESULT_CODE_UI -> {
-                        lblNoWatchingSubject.visibility = View.GONE
-                        updateWatchingSubjectsList()
-                        updateWatchingSubjectCnt()
-                        btnEnrollChange.text = resources.getString(R.string.activity_main_btn_change)
-                    }
+                    when(resultCode) {
+                        RESULT_CODE_UI -> {
+                            lblNoWatchingSubject.visibility = View.GONE
+                            updateWatchingSubjectsList()
+                            updateWatchingSubjectCnt()
+                            btnEnrollChange.text = resources.getString(R.string.activity_main_btn_change)
+                        }
                     RESULT_CODE_FINISH -> {
                         finish()
                     }

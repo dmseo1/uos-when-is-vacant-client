@@ -2,8 +2,8 @@ package com.dongmin.www.wiv.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -77,13 +77,17 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
                                 callbackToMain!!.invalidateTouch(View.GONE)
                                 return
                             }
+
+                            /*
                             when (result) {
                                 "AUTHORIZED" -> {
+
+                                */
                                     //알림 구독 삭제
                                     FirebaseMessaging.getInstance().unsubscribeFromTopic(subjectNoDiv).addOnCompleteListener { task ->
                                         if(task.isSuccessful) {
                                             //sharedPreferences 갱신 자료 제작
-                                            val watchingSubjects = sf.getString("watching_subject", "0000-00")!!.split(";")
+                                            val watchingSubjects = sf.getString("watching_subject", "00000-00")!!.split(";")
                                             val watchingSubjectsName = sf.getString("watching_subject_name", "")!!.split(";")
                                             var remaining = 0
                                             var modifiedWatchingSubjects = ""
@@ -103,6 +107,8 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
                                             }
                                             if(remaining == 0) modifiedWatchingSubjects = "00000-00"
 
+                                            /*
+
                                             //데이터베이스 변경
                                             HttpConnector("delete_watching_subject.php",
                                                 "secCode=onlythiswivappcancallthisdeletewatchingsubjectfile!&email=${sf.getString("email", "")}&watchingSubjects=$modifiedWatchingSubjects",
@@ -119,6 +125,8 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
                                                             callbackToMain!!.finishActivity()
                                                             return
                                                         }
+
+                                                        */
 
                                                         //sf 수정
                                                         val sfEditor = sf.edit()
@@ -141,13 +149,19 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
 
                                                         callbackToMain!!.updateWatchingSubjectCnt()
                                                         callbackToMain!!.invalidateTouch(View.GONE)
+
+                                            /*
                                                     }
                                                 }).execute()
+
+                                                */
                                         } else {
                                             callbackToMain!!.invalidateTouch(View.GONE)
 
                                         }
                                     }
+
+                            /*
                                 }
 
                                 "UNAUTHORIZED" -> {
@@ -166,9 +180,9 @@ class WatchingSubjectListAdapter(context : Context) : RecyclerView.Adapter<Watch
                                     callbackToMain!!.finishActivity()
                                 }
                             }
+                            */
                         }
                     }).execute()
-
 
             }
         } catch (e: Exception) {

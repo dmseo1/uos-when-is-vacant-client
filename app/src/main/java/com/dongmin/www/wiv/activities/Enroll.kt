@@ -2,9 +2,9 @@ package com.dongmin.www.wiv.activities
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -21,6 +21,7 @@ import com.dongmin.www.wiv.elements.SubjectElement
 import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.HttpConnectorOthers
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
+import com.dongmin.www.wiv.popups.FilterHelp
 import kotlinx.android.synthetic.main.activity_enroll.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -348,6 +349,13 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
         opaWindow.setOnTouchListener{ _, _ ->
             return@setOnTouchListener true
         }
+
+        //도움말 버튼들 리스너 연결
+        btnHelpExperiment.setOnClickListener(this)
+        btnHelpEngineering.setOnClickListener(this)
+        btnHelpFLanguage.setOnClickListener(this)
+        btnHelpVolunteer.setOnClickListener(this)
+        btnHelpConsult.setOnClickListener(this)
     }
 
     override fun onBackPressed() {
@@ -529,7 +537,7 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                 }
 
                 //과목 정보를 가지고 올 주소를 결정한다(DB의 정보)
-                HttpConnector("fetch_search_pos.php", "secCode=onlythiswivappcancallthisfetchsearchposphpfile!&userNo=${sf.getString("no", "0")}", object : UIModifyAvailableListener(applicationContext){
+                HttpConnector("fetch_search_pos.php", "secCode=onlythiswivappcancallthisfetchsearchposphpfile!&userNo=${sf.getString("no", "0")}&token=${sf.getString("token", "FIRST")}&os=android", object : UIModifyAvailableListener(applicationContext){
                     override fun taskCompleted(result: String?) {
                         super.taskCompleted(result)
                         if(result!!.contains("NETWORK_CONNECTION")) {
@@ -597,6 +605,22 @@ class Enroll : AppCompatActivity(), View.OnClickListener, SubjectListAdapter.Cal
                 }).execute()
 
 
+            }
+
+            btnHelpExperiment.id -> {
+                FilterHelp(this@Enroll, resources.getString(R.string.popup_filter_help_experiment)).start()
+            }
+            btnHelpEngineering.id -> {
+                FilterHelp(this@Enroll, resources.getString(R.string.popup_filter_help_engineer)).start()
+            }
+            btnHelpVolunteer.id -> {
+                FilterHelp(this@Enroll, resources.getString(R.string.popup_filter_help_volunteer)).start()
+            }
+            btnHelpFLanguage.id -> {
+                FilterHelp(this@Enroll, resources.getString(R.string.popup_filter_help_f_language)).start()
+            }
+            btnHelpConsult.id -> {
+                FilterHelp(this@Enroll, resources.getString(R.string.popup_filter_help_consult)).start()
             }
         }
     }

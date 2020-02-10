@@ -8,14 +8,16 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import com.dongmin.www.wiv.R
 import com.dongmin.www.wiv.elements.SubDepartment
 import com.dongmin.www.wiv.libraries.HttpConnector
 import com.dongmin.www.wiv.libraries.UIModifyAvailableListener
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
+//import com.google.android.gms.ads.MobileAds
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONObject
 
@@ -46,6 +48,7 @@ class Init : AppCompatActivity() {
         }
 
 
+
         //TODO: 백그라운드 제한 확인
 
         //유저 데이터 받아오기
@@ -54,9 +57,24 @@ class Init : AppCompatActivity() {
         //채널 등록(알림을 받기 위한 채널)
         createNotificationChannel()
 
+        //토큰 확인
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("Failed", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                Log.d("my token", token)
+                val sfEditor = sf.edit()
+                sfEditor.putString("token", token)
+                sfEditor.apply()
+            })
+
 
         //버전 체크
-        HttpConnector("fetch_app_variables.php", "secCode=onlythiswivappcancallthisfetchappvariablesphpfile!", object : UIModifyAvailableListener(applicationContext) {
+        HttpConnector("fetch_app_variables.php", "secCode=onlythiswivappcancallthisfetchappvariablesphpfile!&token=${sf.getString("token", "FIRST")}", object : UIModifyAvailableListener(applicationContext) {
             override fun taskCompleted(result: String?) {
                 super.taskCompleted(result)
                 if(result!!.contains("NETWORK_CONNECTION")) {
@@ -65,7 +83,7 @@ class Init : AppCompatActivity() {
                 }
 
                 //광고 초기화
-                MobileAds.initialize(this@Init, "ca-app-pub-1929576815920713~4583913588")
+                //MobileAds.initialize(this@Init, "ca-app-pub-1929576815920713~4583913588")
 
 
                 try {
@@ -106,9 +124,9 @@ class Init : AppCompatActivity() {
                             sf.getString("watching_subject_delete_triggered", "0") == "0") {
 
                             //알림 구독 해제
-                         //   Log.e("왓칭 과목", sf.getString("watching_subject", "00000-00"))
+                            //   Log.e("왓칭 과목", sf.getString("watching_subject", "00000-00"))
                             val ws = sf.getString("watching_subject", "00000-00")!!.split(";")
-                            for(i : Int in 0..(ws.size - 1)) {
+                            for(i : Int in 0 until ws.size) {
                                 FirebaseMessaging.getInstance().unsubscribeFromTopic(ws[i])
                             }
 
@@ -128,6 +146,11 @@ class Init : AppCompatActivity() {
                     return
                 }
 
+
+                startActivity(Intent(this@Init, Main::class.java))
+                finish()
+
+                /*
                 //로그인 되어있는지 체크
                 if(sf.getBoolean("is_login", false)) {
                     //Log.d("FetchedInfo", "${userInfo.userNo}/${userInfo.userEmail}/${userInfo.userToken}")
@@ -136,6 +159,7 @@ class Init : AppCompatActivity() {
                     startActivity(Intent(this@Init, Login::class.java))
                 }
                 finish()
+                */
             }
         }).execute()    //버전체크
     }

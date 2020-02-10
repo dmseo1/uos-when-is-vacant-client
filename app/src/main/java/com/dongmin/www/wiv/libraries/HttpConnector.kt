@@ -58,16 +58,19 @@ class HttpConnector constructor(private val path : String, private val param : S
             try {
                 conn.connect()
             } catch(e : ConnectException) {
-                //Log.e("여기", "야")
+                Log.e("여기", "야")
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             } catch(e : IOException) {
-                //Log.e("여기", "니")
+                Log.e("여기", "니")
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             } catch(e : UnknownHostException) {
-                //Log.e("여기","와서 걸리는거 아님?")
+                Log.e("여기","와서 걸리는거 아님?")
                 e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             } catch(e : Exception) {
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             }
 
@@ -99,16 +102,19 @@ class HttpConnector constructor(private val path : String, private val param : S
 
             //TODO(출시시 해당 로그 제거)
             //받은 데이터 출력
-            //Log.e("RECV DATA", data)
+            Log.e("RECV DATA", data)
 
             result = data
         } catch (e: MalformedURLException) {
             //Log.e("여기", "군")
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         } catch (e: IOException) {
             //Log.e("여기", "요")
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         } catch(e: Exception) {
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         }
         return result

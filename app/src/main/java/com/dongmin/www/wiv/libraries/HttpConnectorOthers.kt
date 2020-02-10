@@ -52,18 +52,23 @@ class HttpConnectorOthers constructor(private val path : String, private val par
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
             conn.requestMethod = "POST"
             conn.doInput = true
+            conn.doOutput = false
             try {
                 conn.connect()
                // Log.d("리스폰스1", "${conn.responseCode}: ${conn.responseMessage}")
             } catch(e : ConnectException) {
                 //Log.e("여기", "야")
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
+
             } catch(e : IOException) {
                 //Log.e("여기", "니")
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             } catch(e : UnknownHostException) {
                 //Log.e("여기","와서 걸리는거 아님?")
                 //e.printStackTrace()
+                e.printStackTrace()
                 return "NETWORK_CONNECTION_FAILED"
             } catch(e : Exception) {
                 e.printStackTrace()
@@ -96,19 +101,22 @@ class HttpConnectorOthers constructor(private val path : String, private val par
             }
 
             data = buff.toString().trim { it <= ' ' }
-            //Log.e("RECV DATA", data)
+            Log.e("RECV DATA", data)
             result = data
 
         } catch (e: MalformedURLException) {
             //Log.e("여기", "군")
             //e.printStackTrace()
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         } catch (e: IOException) {
             //Log.e("여기", "요")
             //e.printStackTrace()
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         } catch(e: Exception) {
             //e.printStackTrace()
+            e.printStackTrace()
             result = "NETWORK_CONNECTION_FAILED"
         }
         return result
